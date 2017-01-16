@@ -1,1 +1,2 @@
-scapy==2.3.3
+scapy==2.3.3; python_version < '3.0'
+scapy-python3==0.20; python_version >= '3.0'
