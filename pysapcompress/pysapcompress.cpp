@@ -441,7 +441,7 @@ pysapcompress_decompress(PyObject *self, PyObject *args)
 
 
 /* Method definitions */
-static PyMethodDef pysapcompressMethods[] = {
+static PyMethodDef pysapcompress_functions[] = {
     {"compress", (PyCFunction)pysapcompress_compress, METH_VARARGS | METH_KEYWORDS, pysapcompress_compress_doc},
     {"decompress", pysapcompress_decompress, METH_VARARGS, pysapcompress_decompress_doc},
     {NULL, NULL, 0, NULL}
@@ -451,13 +451,35 @@ static PyMethodDef pysapcompressMethods[] = {
 /* pysapcompress module doc string */
 static char pysapcompress_module_doc[] = "Library implementing SAP's LZH and LZC compression algorithms.";
 
+
+/* Initialization definitions for supporting Python 2 and 3 */
+#if PY_MAJOR_VERSION >= 3
+  #define MOD_ERROR_VAL NULL
+  #define MOD_SUCCESS_VAL(val) val
+  #define MOD_INIT(name) PyMODINIT_FUNC PyInit_##name(void)
+  #define MOD_DEF(ob, name, doc, methods) \
+          static struct PyModuleDef moduledef = { \
+            PyModuleDef_HEAD_INIT, name, doc, -1, methods, }; \
+          ob = PyModule_Create(&moduledef);
+#else
+  #define MOD_ERROR_VAL
+  #define MOD_SUCCESS_VAL(val)
+  #define MOD_INIT(name) void init##name(void)
+  #define MOD_DEF(ob, name, doc, methods) \
+          ob = Py_InitModule3(name, methods, doc);
+#endif
+
+
 /* Module initialization */
-PyMODINIT_FUNC
-initpysapcompress(void)
+MOD_INIT(pysapcompress)
 {
     PyObject *module = NULL;
+
     /* Create the module and define the methods */
-    module = Py_InitModule3("pysapcompress", pysapcompressMethods, pysapcompress_module_doc);
+    MOD_DEF(module, "pysapcompress", pysapcompress_module_doc, pysapcompress_functions)
+
+    if (module == NULL)
+        return MOD_ERROR_VAL;
 
     /* Add the algorithm constants */
     PyModule_AddIntConstant(module, "ALG_LZC", ALG_LZC);
@@ -470,4 +492,5 @@ initpysapcompress(void)
     decompression_exception = PyErr_NewException(decompression_exception_name, NULL, NULL);
     PyModule_AddObject(module, decompression_exception_short, decompression_exception);
 
+    return MOD_SUCCESS_VAL(module);
 }
