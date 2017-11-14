@@ -113,7 +113,7 @@ setup(name=pysap.__title__,   # Package information
                 'notebooks': PreExecuteNotebooksCommand},
 
       # Requirements
-      install_requires=open('requirements.txt').read().splitlines(),
+      install_requires=[],
 
       # Optional requirements for docs and some examples
       extras_require={"docs": open('requirements-docs.txt').read().splitlines(),
