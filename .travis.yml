@@ -10,16 +10,12 @@ python:
   - 3.5
   - 3.6
 
+env:
+  - CXX=clang++ CC=clang
+  - CXX=g++ CC=gcc
+
 matrix:
     include:
-        - os: linux
-          env:
-            - CXX=clang++ CC=clang
-
-        - os: linux
-          env:
-            - CXX=g++ CC=gcc
-
         - os: osx
           python: 2.7
           language: generic
