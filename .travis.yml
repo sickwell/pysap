@@ -5,19 +5,23 @@ language: python
 dist: trusty
 sudo: false
 
+python:
+  - 2.7
+  - 3.5
+  - 3.6
+
 matrix:
     include:
         - os: linux
-          python: 2.7
           env:
             - CXX=clang++ CC=clang
 
         - os: linux
-          python: 2.7
           env:
             - CXX=g++ CC=gcc
 
         - os: osx
+          python: 2.7
           language: generic
 
 addons:
