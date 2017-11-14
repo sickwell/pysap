@@ -2,5 +2,6 @@ Sphinx>=1.4
 ipykernel
 nbconvert
 nbsphinx
-pyx==0.12.1
+pyx==0.12.1; python_version < '3.0'
+pyx==0.14.1; python_version >= '3.0'
 ipython<6.0
