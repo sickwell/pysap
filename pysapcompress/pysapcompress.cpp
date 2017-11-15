@@ -457,7 +457,7 @@ static char pysapcompress_module_doc[] = "Library implementing SAP's LZH and LZC
 
 
 /* Initialization definitions for supporting Python 2 and 3 */
-#if IS_PY3K
+#ifdef IS_PY3K
   #define MOD_ERROR_VAL NULL
   #define MOD_SUCCESS_VAL(val) val
   #define MOD_INIT(name) PyMODINIT_FUNC PyInit_##name(void)
