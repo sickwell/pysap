@@ -27,6 +27,7 @@ import logging
 from re import escape
 from optparse import OptionParser, OptionGroup
 # External imports
+from scapy.compat import raw
 from scapy.config import conf
 from scapy.packet import bind_layers
 # Custom imports
@@ -111,7 +112,7 @@ def show_all(item):
     print("\tType = %s\tId = %s\tSID = %s\tValue = %s" % (diag_item_types[item.item_type],
                                                           diag_appl_ids[item.item_id],
                                                           diag_appl_sids[item.item_id][item.item_sid],
-                                                          escape(str(item.item_value))))
+                                                          escape(raw(item.item_value))))
 
 
 def show_serv_info(item):

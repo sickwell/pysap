@@ -24,6 +24,7 @@ from threading import Thread
 from struct import pack, unpack
 from socketserver import BaseRequestHandler, ThreadingTCPServer
 # External imports
+from scapy.compat import raw
 from scapy.fields import StrField
 from scapy.packet import Packet, Raw
 # Custom imports
@@ -39,7 +40,7 @@ class PySAPNITest(unittest.TestCase):
         """Test SAPNI length field building"""
         sapni = SAPNI() / self.test_string
 
-        (sapni_length, ) = unpack("!I", str(sapni)[:4])
+        (sapni_length, ) = unpack("!I", raw(sapni)[:4])
         self.assertEqual(sapni_length, len(self.test_string))
         self.assertEqual(sapni.payload.load, self.test_string)
 

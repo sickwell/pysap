@@ -25,6 +25,7 @@ from struct import pack
 from datetime import datetime
 from os import stat as os_stat
 # External imports
+from scapy.compat import raw
 from scapy.packet import Packet
 from scapy.fields import (ByteField, ByteEnumField, LEIntField, FieldLenField,
                           PacketField, StrFixedLenField, PacketListField,
@@ -215,7 +216,7 @@ class SAPCARArchiveFilev200Format(PacketNoPadded):
             # Store compressed block types for later decompression
             elif block.type in [SAPCAR_BLOCK_TYPE_COMPRESSED, SAPCAR_BLOCK_TYPE_COMPRESSED_LAST]:
                 # Add compressed block to a buffer, skipping the first 4 bytes of each block (uncompressed length)
-                compressed += str(block.compressed)[4:]
+                compressed += raw(block.compressed)[4:]
                 # If the expected length wasn't already set, do it
                 if not exp_length:
                     exp_length = block.compressed.uncompress_length
@@ -227,7 +228,7 @@ class SAPCARArchiveFilev200Format(PacketNoPadded):
                 checksum = block.checksum
                 # If there was at least one compressed block that set the expected length, decompress it
                 if exp_length:
-                    (_, block_length, block_buffer) = decompress(str(compressed), exp_length)
+                    (_, block_length, block_buffer) = decompress(raw(compressed), exp_length)
                     if block_length != exp_length or not block_buffer:
                         raise DecompressError("Error decompressing block")
                     fd.write(block_buffer)
@@ -288,7 +289,7 @@ class SAPCARArchiveFilev201Format(PacketNoPadded):
             elif block.type in [SAPCAR_BLOCK_TYPE_COMPRESSED, SAPCAR_BLOCK_TYPE_COMPRESSED_LAST]:
                 compressed = block.compressed
                 exp_block_length = compressed.uncompress_length
-                (_, block_length, block_buffer) = decompress(str(compressed)[4:], exp_block_length)
+                (_, block_length, block_buffer) = decompress(raw(compressed)[4:], exp_block_length)
                 if block_length != exp_block_length or not block_buffer:
                     raise DecompressError("Error decompressing block")
                 fd.write(block_buffer)
@@ -607,7 +608,7 @@ class SAPCARArchiveFile(object):
         for block in archive_file._file_format.blocks:
             new_block = SAPCARCompressedBlockFormat()
             new_block.type = block.type
-            new_block.compressed = SAPCARCompressedBlobFormat(str(block.compressed))
+            new_block.compressed = SAPCARCompressedBlobFormat(raw(block.compressed))
             new_block.checksum = block.checksum
             new_archive_file._file_format.blocks.append(new_block)
 
@@ -797,7 +798,7 @@ class SAPCARArchive(object):
         """Writes the SAP CAR archive file to the file descriptor.
         """
         self.fd.seek(0)
-        self.fd.write(str(self._sapcar))
+        self.fd.write(raw(self._sapcar))
         self.fd.flush()
 
     def write_as(self, filename=None):
@@ -810,7 +811,7 @@ class SAPCARArchive(object):
             self.write()
         else:
             with open(filename, "w") as fd:
-                fd.write(str(self._sapcar))
+                fd.write(raw(self._sapcar))
 
     def add_file(self, filename, archive_filename=None):
         """Adds a new file to the SAP CAR archive file.
@@ -850,5 +851,5 @@ class SAPCARArchive(object):
         :rtype: string
         """
         if self._sapcar:
-            return str(self._sapcar)
+            return raw(self._sapcar)
         return ""

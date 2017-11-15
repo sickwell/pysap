@@ -25,6 +25,7 @@ from struct import unpack
 from optparse import OptionParser, OptionGroup
 # External imports
 import scapy.arch
+from scapy.compat import raw
 from scapy.config import conf
 from scapy.sendrecv import sniff
 from scapy.layers.inet import IP, TCP
@@ -69,7 +70,7 @@ class DiagParser(object):
             if key not in self.packets_metadata:
                 self.packets_metadata[key] = []
             self.packets_metadata[key].append((pkt[TCP].seq + pkt[TCP].ack,
-                                               str(pkt[Raw].load)))
+                                               raw(pkt[Raw].load)))
 
     def reassemble(self):
         # Build a stream of packets for each connection

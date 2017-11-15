@@ -21,6 +21,7 @@
 from struct import unpack
 from collections import defaultdict
 # External imports
+from scapy.compat import raw
 from scapy.layers.inet import TCP
 from scapy.packet import Packet, bind_layers
 from scapy.fields import (ByteEnumField, IntField, ByteField, LenField,
@@ -571,7 +572,7 @@ class SAPDiag(PacketNoPadded):
         if pay is None:
             pay = ''
         if self.compress == 1:
-            payload = "".join([str(item) for item in self.message]) + pay
+            payload = "".join([raw(item) for item in self.message]) + pay
             if len(payload) > 0:
                 try:
                     return p[:8] + self.do_compress(payload)
