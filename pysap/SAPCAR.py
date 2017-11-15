@@ -20,13 +20,13 @@
 # Standard imports
 import stat
 from zlib import crc32
-from io import StringIO
 from struct import pack
 from datetime import datetime
 from os import stat as os_stat
 # External imports
 from scapy.compat import raw
 from scapy.packet import Packet
+from scapy.modules.six import StringIO
 from scapy.fields import (ByteField, ByteEnumField, LEIntField, FieldLenField,
                           PacketField, StrFixedLenField, PacketListField,
                           ConditionalField, LESignedIntField, StrField)

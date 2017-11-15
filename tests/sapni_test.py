@@ -22,11 +22,11 @@ import socket
 import unittest
 from threading import Thread
 from struct import pack, unpack
-from socketserver import BaseRequestHandler, ThreadingTCPServer
 # External imports
 from scapy.compat import raw
 from scapy.fields import StrField
 from scapy.packet import Packet, Raw
+from scapy.modules.six.moves import socketserver
 # Custom imports
 from pysap.SAPNI import (SAPNI, SAPNIStreamSocket, SAPNIServerThreaded,
                          SAPNIServerHandler, SAPNIProxy, SAPNIProxyHandler)
@@ -55,7 +55,7 @@ class PySAPNITest(unittest.TestCase):
         self.assertEqual(sapni.payload.load, self.test_string)
 
 
-class SAPNITestHandler(BaseRequestHandler):
+class SAPNITestHandler(socketserver.BaseRequestHandler):
     """Basic SAP NI echo server implemented using TCPServer"""
 
     def handle(self):
@@ -89,9 +89,9 @@ class PySAPNIStreamSocketTest(unittest.TestCase):
     test_string = "TEST" * 10
 
     def start_server(self, handler_cls):
-        self.server = ThreadingTCPServer((self.test_address, self.test_port),
-                                         handler_cls,
-                                         bind_and_activate=False)
+        self.server = socketserver.ThreadingTCPServer((self.test_address, self.test_port),
+                                                      handler_cls,
+                                                      bind_and_activate=False)
         self.server.allow_reuse_address = True
         self.server.server_bind()
         self.server.server_activate()

@@ -23,10 +23,10 @@ import logging
 from select import select
 from struct import unpack
 from threading import Event
-from socketserver import BaseRequestHandler, ThreadingMixIn, TCPServer
 # External imports
 from scapy.fields import LenField
 from scapy.packet import Packet, Raw
+from scapy.modules.six.moves import socketserver
 from scapy.supersocket import socket, StreamSocket
 # Custom imports
 from pysap.utils import Worker
@@ -370,7 +370,7 @@ class SAPNIClient(object):
     """
 
 
-class SAPNIServer(TCPServer):
+class SAPNIServer(socketserver.TCPServer):
     """Base SAP NI Server class.
 
     Subclasses must define a client class for keeping state information
@@ -398,8 +398,8 @@ class SAPNIServer(TCPServer):
         self.keep_alive = keep_alive
         self.base_cls = base_cls
         self.clients = {}
-        TCPServer.__init__(self, server_address, RequestHandlerClass,
-                           bind_and_activate=bind_and_activate)
+        socketserver.TCPServer.__init__(self, server_address, RequestHandlerClass,
+                                        bind_and_activate=bind_and_activate)
 
     def handle_error(self, request, client_address):
         """Called to handle an error or exception occurred with the server.
@@ -425,11 +425,11 @@ class SAPNIServer(TCPServer):
         self.close_request(request)
 
 
-class SAPNIServerThreaded(ThreadingMixIn, SAPNIServer):
+class SAPNIServerThreaded(socketserver.ThreadingMixIn, SAPNIServer):
     """A SAP NI Server implementation using threading """
 
 
-class SAPNIServerHandler(BaseRequestHandler):
+class SAPNIServerHandler(socketserver.BaseRequestHandler):
     """SAP NI Server Handler
 
     Handles :class:`SAPNI` packets coming from a :class:`SAPNIServer`.
