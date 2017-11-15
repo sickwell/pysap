@@ -149,9 +149,9 @@ class PySAPDiagTest(unittest.TestCase):
             fields_desc = [StrField("strfield", None)]
         bind_diagitem(SAPDiagItemTest, "APPL", 0x99, 0xff)
 
-        item_string = "strfield"
+        item_string = b"strfield"
         item_value = SAPDiagItemTest(strfield=item_string)
-        item = SAPDiagItem("\x10\x99\xff" + pack("!H", len(item_string)) + item_string)
+        item = SAPDiagItem(b"\x10\x99\xff" + pack("!H", len(item_string)) + item_string)
 
         self.assertEqual(item.item_value, item_value)
         self.assertEqual(item.item_length, len(item_string))

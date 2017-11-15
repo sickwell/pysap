@@ -34,7 +34,7 @@ from pysap.SAPNI import (SAPNI, SAPNIStreamSocket, SAPNIServerThreaded,
 
 class PySAPNITest(unittest.TestCase):
 
-    test_string = "LALA" * 10
+    test_string = b"LALA" * 10
 
     def test_sapni_building(self):
         """Test SAPNI length field building"""
@@ -71,7 +71,7 @@ class SAPNITestHandlerKeepAlive(SAPNITestHandler):
     """Basic SAP NI keep alive server"""
 
     def handle(self):
-        self.request.sendall("\x00\x00\x00\x08NI_PING\x00")
+        self.request.sendall(b"\x00\x00\x00\x08NI_PING\x00")
         SAPNITestHandler.handle(self)
 
 
@@ -79,14 +79,14 @@ class SAPNITestHandlerClose(SAPNITestHandler):
     """Basic SAP NI server that closes the connection"""
 
     def handle(self):
-        self.request.send("")
+        self.request.send(b"")
 
 
 class PySAPNIStreamSocketTest(unittest.TestCase):
 
     test_port = 8005
     test_address = "127.0.0.1"
-    test_string = "TEST" * 10
+    test_string = b"TEST" * 10
 
     def start_server(self, handler_cls):
         self.server = socketserver.ThreadingTCPServer((self.test_address, self.test_port),
@@ -222,9 +222,9 @@ class SAPNIServerTestHandler(SAPNIServerHandler):
 
 class PySAPNIServerTest(unittest.TestCase):
 
-    test_port = 8005
+    test_port = 8006
     test_address = "127.0.0.1"
-    test_string = "TEST" * 10
+    test_string = b"TEST" * 10
     handler_cls = SAPNIServerTestHandler
 
     def setUp(self):
@@ -259,10 +259,10 @@ class PySAPNIServerTest(unittest.TestCase):
 
 class PySAPNIProxyTest(unittest.TestCase):
 
-    test_proxyport = 8005
-    test_serverport = 8006
+    test_proxyport = 8007
+    test_serverport = 8008
     test_address = "127.0.0.1"
-    test_string = "TEST" * 10
+    test_string = b"TEST" * 10
     proxyhandler_cls = SAPNIProxyHandler
     serverhandler_cls = SAPNIServerTestHandler
 
@@ -328,7 +328,7 @@ class PySAPNIProxyTest(unittest.TestCase):
 
         response = sock.recv(1024)
 
-        expected_reponse = self.test_string + "Client" + "Server"
+        expected_reponse = self.test_string + b"Client" + b"Server"
         self.assertEqual(len(response), len(expected_reponse) + 8)
         self.assertEqual(unpack("!I", response[:4]), (len(expected_reponse) + 4, ))
         self.assertEqual(unpack("!I", response[4:8]), (len(self.test_string) + 6, ))
