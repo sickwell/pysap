@@ -36,7 +36,7 @@ class PySAPCARTest(unittest.TestCase):
     test_timestamp = "01 Dec 2015 22:48"
     test_perm_mode = 33204
     test_permissions = "-rw-rw-r--"
-    test_string = "The quick brown fox jumps over the lazy dog"
+    test_string = b"The quick brown fox jumps over the lazy dog"
 
     def setUp(self):
         with open(self.test_filename, "wb") as fd:
@@ -58,7 +58,7 @@ class PySAPCARTest(unittest.TestCase):
             self.assertEqual(1, len(sapcar_archive.files))
             self.assertEqual(1, len(sapcar_archive.files_names))
             self.assertListEqual([self.test_filename], sapcar_archive.files_names)
-            self.assertListEqual([self.test_filename], sapcar_archive.files.keys())
+            self.assertListEqual([self.test_filename], list(sapcar_archive.files.keys()))
 
             af = sapcar_archive.open(self.test_filename)
             self.assertEqual(self.test_string, af.read())
@@ -109,7 +109,7 @@ class PySAPCARTest(unittest.TestCase):
         self.assertEqual(2, len(ar.files))
         self.assertEqual(2, len(ar.files_names))
         self.assertListEqual([self.test_filename, self.test_filename+"two"], ar.files_names)
-        self.assertListEqual([self.test_filename, self.test_filename+"two"], ar.files.keys())
+        self.assertListEqual([self.test_filename, self.test_filename+"two"], list(ar.files.keys()))
 
         for filename in [self.test_filename, self.test_filename+"two"]:
             af = ar.open(filename)
