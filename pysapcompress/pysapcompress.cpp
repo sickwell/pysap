@@ -34,6 +34,10 @@
 #include "hpa107cslzh.h"
 #include "hpa105CsObjInt.h"
 
+/* Define an easy way to check for Python 3 compatibility */
+#if PY_MAJOR_VERSION >= 3
+#define IS_PY3K
+#endif
 
 /* Memory allocation factor constant */
 #define MEMORY_ALLOC_FACTOR 10
@@ -453,7 +457,7 @@ static char pysapcompress_module_doc[] = "Library implementing SAP's LZH and LZC
 
 
 /* Initialization definitions for supporting Python 2 and 3 */
-#if PY_MAJOR_VERSION >= 3
+#if IS_PY3K
   #define MOD_ERROR_VAL NULL
   #define MOD_SUCCESS_VAL(val) val
   #define MOD_INIT(name) PyMODINIT_FUNC PyInit_##name(void)
